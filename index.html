@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitFuel - البدائل الذكية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #4ade80;
+            --primary-dark: #22c55e;
+            --gradient-start: #1e3a8a;
+            --gradient-end: #10b981;
+            --bg-color: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            background-color: white;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            text-align: center;
+            padding: 30px 20px 40px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        main {
+            padding: 20px 25px 30px;
+            margin-top: -20px;
+            background-color: white;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .input-group select, .input-group input {
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            outline: none;
+            width: 100%;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+        }
+
+        .input-group input[type="number"] {
+            cursor: text;
+        }
+
+        .row-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row-group .input-group {
+            flex: 1;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        button:hover {
+            background-color: #16a34a;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0fdf4;
+            border: 2px solid var(--primary-green);
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-title {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .result-highlight {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        .result-subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 10px;
+        }
+
+        .macros-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            text-align: right;
+        }
+
+        .macro-item {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .macro-label {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .macro-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .calories-item {
+            grid-column: span 2;
+            background-color: #eff6ff;
+            border-color: #bfdbfe;
+        }
+        .calories-item .macro-value {
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>FitFuel</h1>
+            <p>البدائل الذكية</p>
+        </header>
+        <main>
+            <div class="input-group">
+                <label>الوجبة الأساسية</label>
+                <select id="base-food"></select>
+            </div>
+
+            <div class="input-group">
+                <label>تبديل بـ</label>
+                <select id="sub-food"></select>
+            </div>
+
+            <div class="row-group">
+                <div class="input-group">
+                    <label>الكمية (جرام)</label>
+                    <input type="number" id="quantity" value="100" min="1">
+                </div>
+                <div class="input-group">
+                    <label>أساس المقارنة</label>
+                    <select id="basis">
+                        <option value="protein">البروتين</option>
+                        <option value="calories">السعرات الحرارية</option>
+                        <option value="fats">الدهون</option>
+                        <option value="carbs">الكربوهيدرات</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="calc-btn">احسب البديل</button>
+
+            <div class="result-box" id="result">
+                <!-- النتيجة تظهر هنا -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // قاعدة بيانات لأهم 20 عنصر غذائي (القيم لكل 100 جرام)
+        const foods = [
+            { id: 'chicken', name: 'صدور دجاج 🍗', protein: 31, carbs: 0, fats: 3.6, calories: 165 },
+            { id: 'beef', name: 'لحم بقري 🥩', protein: 26, carbs: 0, fats: 15, calories: 250 },
+            { id: 'lamb', name: 'لحم غنم 🐑', protein: 25, carbs: 0, fats: 21, calories: 294 },
+            { id: 'turkey', name: 'ديك رومي 🦃', protein: 29, carbs: 0, fats: 1.5, calories: 135 },
+            { id: 'salmon', name: 'سلمون 🐟', protein: 25, carbs: 0, fats: 13, calories: 208 },
+            { id: 'tuna', name: 'تونة 🐟', protein: 25, carbs: 0, fats: 1, calories: 116 },
+            { id: 'tilapia', name: 'سمك بلطي 🐟', protein: 26, carbs: 0, fats: 2.7, calories: 128 },
+            { id: 'shrimp', name: 'جمبري 🍤', protein: 24, carbs: 0.2, fats: 0.3, calories: 99 },
+            { id: 'eggs', name: 'بيض كامل 🥚', protein: 13, carbs: 1.1, fats: 11, calories: 155 },
+            { id: 'egg_whites', name: 'بياض بيض 🥚', protein: 11, carbs: 0.7, fats: 0.2, calories: 52 },
+            { id: 'cottage', name: 'جبن قريش 🧀', protein: 11, carbs: 3.4, fats: 4.3, calories: 98 },
+            { id: 'greek_yogurt', name: 'زبادي يوناني 🥛', protein: 10, carbs: 3.6, fats: 0.4, calories: 59 },
+            { id: 'cheddar', name: 'جبن شيدر 🧀', protein: 25, carbs: 1.3, fats: 33, calories: 402 },
+            { id: 'tofu', name: 'توفو 🌱', protein: 8, carbs: 1.9, fats: 4.8, calories: 76 },
+            { id: 'lentils', name: 'عدس 🥣', protein: 9, carbs: 20, fats: 0.4, calories: 116 },
+            { id: 'chickpeas', name: 'حمص 🥣', protein: 8.9, carbs: 27, fats: 2.6, calories: 164 },
+            { id: 'white_beans', name: 'فاصولياء بيضاء 🥣', protein: 9.7, carbs: 25, fats: 0.5, calories: 139 },
+            { id: 'whey', name: 'مسحوق بروتين 🥤', protein: 80, carbs: 8, fats: 6, calories: 400 },
+            { id: 'quinoa', name: 'كينوا 🌾', protein: 4.4, carbs: 21, fats: 1.9, calories: 120 },
+            { id: 'oats', name: 'شوفان 🥣', protein: 13, carbs: 67, fats: 7, calories: 389 }
+        ];
+
+        const baseSelect = document.getElementById('base-food');
+        const subSelect = document.getElementById('sub-food');
+        const qtyInput = document.getElementById('quantity');
+        const basisSelect = document.getElementById('basis');
+        const calcBtn = document.getElementById('calc-btn');
+        const resultBox = document.getElementById('result');
+
+        // تعبئة القوائم المنسدلة
+        foods.forEach(food => {
+            const option1 = new Option(food.name, food.id);
+            const option2 = new Option(food.name, food.id);
+            baseSelect.add(option1);
+            subSelect.add(option2);
+        });
+
+        // اختيار افتراضي (لحمة -> فراخ) مثل الصورة
+        baseSelect.value = 'beef';
+        subSelect.value = 'chicken';
+
+        // دالة الحساب
+        calcBtn.addEventListener('click', () => {
+            const baseFood = foods.find(f => f.id === baseSelect.value);
+            const subFood = foods.find(f => f.id === subSelect.value);
+            const qty = parseFloat(qtyInput.value);
+            const basis = basisSelect.value; // protein, calories, fats, carbs
+
+            if (!qty || qty <= 0) {
+                alert('الرجاء إدخال كمية صحيحة');
+                return;
+            }
+
+            const baseValue = baseFood[basis];
+            const subValue = subFood[basis];
+
+            // التحقق من عدم القسمة على صفر
+            if (baseValue === 0 || subValue === 0) {
+                alert('لا يمكن إجراء المقارنة بناءً على هذا العنصر لأن أحد الأطعمة لا يحتوي عليه.');
+                return;
+            }
+
+            // حساب الوزن البديل بناءً على أساس المقارنة المختار
+            const subQty = (qty * baseValue) / subValue;
+
+            // حساب القيم الغذائية للوزن البديل
+            const finalProtein = (subQty * subFood.protein) / 100;
+            const finalCarbs = (subQty * subFood.carbs) / 100;
+            const finalFats = (subQty * subFood.fats) / 100;
+            const finalCalories = (subQty * subFood.calories) / 100;
+
+            // تحديد اسم أساس المقارنة بالعربي للعرض
+            const basisNames = {
+                'protein': 'البروتين',
+                'calories': 'السعرات الحرارية',
+                'fats': 'الدهون',
+                'carbs': 'الكربوهيدرات'
+            };
+
+            // عرض النتيجة
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `
+                <p class="result-title">النتيجة (بناءً على ${basisNames[basis]}):</p>
+                <p class="result-highlight">${subQty.toFixed(1)} جرام ${subFood.name.split(' ')[0]}</p>
+                <p class="result-subtitle">تعادل ${qty} جرام ${baseFood.name.split(' ')[0]}</p>
+                
+                <div class="macros-grid">
+                    <div class="macro-item calories-item">
+                        <span class="macro-label">السعرات الحرارية</span>
+                        <span class="macro-value">${finalCalories.toFixed(0)} سعرة</span>
+                    </div>
+                    <div class="macro-item">
+                        <span class="macro-label">بروتين</span>
+                        <span class="macro-value">${finalProtein.toFixed(1)} جم</span>
+                    </div>
+                    <div class="macro-item">
+                        <span class="macro-label">كربوهيدرات</span>
+                        <span class="macro-value">${finalCarbs.toFixed(1)} جم</span>
+                    </div>
+                    <div class="macro-item" style="grid-column: span 2;">
+                        <span class="macro-label">دهون</span>
+                        <span class="macro-value">${finalFats.toFixed(1)} جم</span>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
